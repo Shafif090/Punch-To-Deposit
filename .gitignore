@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+*.jar
+*.zip
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+.classpath
+.project
+.settings/
+bin/
+
+# Tools
+tools/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local development
+*.log
+.gradle-cache/

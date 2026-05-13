@@ -1,0 +1,14 @@
+[
+  {
+    "modid": "punch_to_deposit",
+    "name": "Punch To Deposit",
+    "description": "Punch chests and ender chests to deposit the item in your hand.",
+    "version": "1.0.0",
+    "mcversion": "1.8.9",
+    "url": "",
+    "updateUrl": "",
+    "authorList": ["Copilot"],
+    "credits": "Inspired by Hypixel BedWars punch-to-deposit.",
+    "logoFile": ""
+  }
+]
