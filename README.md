@@ -8,6 +8,8 @@ A Forge 1.8.9 client-side quality-of-life mod that lets you punch a nearby chest
 - **Works Everywhere**: Singleplayer and multiplayer servers — uses only standard inventory interactions.
 - **Tool Preservation**: Tools are never deposited, so they stay safe in your inventory.
 - **Vanilla Compatible**: No server-side installation needed.
+- **Settings UI**: Press `P` to open an in-game settings screen.
+- **Hover Label**: Show or hide the `PUNCH TO DEPOSIT` hover text while looking at chests.
 
 ## How It Works
 
@@ -20,12 +22,24 @@ A Forge 1.8.9 client-side quality-of-life mod that lets you punch a nearby chest
 
 Everything except tools (pickaxes, swords, axes, shovels, hoes, etc.). Diamonds, emeralds, fireballs, potions, and other items all deposit normally.
 
+## Settings
+
+Open the settings screen with `P` to toggle:
+
+- the whole mod on or off
+- the chest hover label on or off
+
 ## Installation
 
 1. Install [Forge 1.8.9](https://files.minecraftforge.net) for Minecraft 1.8.9.
 2. Download the latest release from [Modrinth](https://modrinth.com/mod/punch-to-deposit-client) or the [releases page](https://github.com/Shafif090/PunchToDeposit/releases).
 3. Place the `.jar` file in your `.minecraft/mods` folder.
 4. Launch Minecraft.
+
+## Links
+
+- GitHub: [Shafif090](https://github.com/Shafif090)
+- Modrinth: [Shafif090](https://modrinth.com/user/Shafif090)
 
 ## Building
 

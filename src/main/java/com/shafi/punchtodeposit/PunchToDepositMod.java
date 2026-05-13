@@ -9,7 +9,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
     modid = PunchToDepositMod.MODID,
     name = PunchToDepositMod.NAME,
     version = PunchToDepositMod.VERSION,
-    acceptableRemoteVersions = "*"
+    acceptableRemoteVersions = "*",
+    guiFactory = "com.shafi.punchtodeposit.client.PunchToDepositGuiFactory"
 )
 public class PunchToDepositMod {
     public static final String MODID = "punch_to_deposit";
@@ -24,6 +25,7 @@ public class PunchToDepositMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        PunchToDepositConfig.load(event);
         proxy.register();
     }
 

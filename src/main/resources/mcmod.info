@@ -5,9 +5,9 @@
     "description": "Punch chests and ender chests to deposit the item in your hand.",
     "version": "1.0.0",
     "mcversion": "1.8.9",
-    "url": "",
-    "updateUrl": "",
-    "authorList": ["Copilot"],
+    "url": "https://modrinth.com/mod/punch-to-deposit-client",
+    "updateUrl": "https://modrinth.com/mod/punch-to-deposit-client",
+    "authorList": ["Shafif090"],
     "credits": "Inspired by Hypixel BedWars punch-to-deposit.",
     "logoFile": ""
   }

@@ -13,24 +13,36 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemShears;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import com.shafi.punchtodeposit.PunchToDepositConfig;
 
 public class ClientEventHandler {
     private static final int LEFT_MOUSE_BUTTON = 0;
     private static final int SHIFT_CLICK_MODE = 1;
     private static final int DEPOSIT_TIMEOUT_TICKS = 10;
+    private static final int LABEL_RANGE_BLOCKS = 14;
 
     private PendingDeposit pendingDeposit;
     private int pendingTicks;
 
     @SubscribeEvent
     public void onMouse(MouseEvent event) {
+        if (!PunchToDepositConfig.enabled) {
+            return;
+        }
+
         if (event.button != LEFT_MOUSE_BUTTON || !event.buttonstate) {
             return;
         }
@@ -76,6 +88,11 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (!PunchToDepositConfig.enabled) {
+            clearPending();
+            return;
+        }
+
         if (event.phase != TickEvent.Phase.END || pendingDeposit == null) {
             return;
         }
@@ -119,6 +136,76 @@ public class ClientEventHandler {
         minecraft.thePlayer.closeScreen();
     }
 
+    @SubscribeEvent
+    public void onRenderWorldLast(RenderWorldLastEvent event) {
+        if (!PunchToDepositConfig.enabled || !PunchToDepositConfig.hoverLabelEnabled) {
+            return;
+        }
+
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.thePlayer == null || minecraft.theWorld == null) {
+            return;
+        }
+
+        Vec3 playerEyes = minecraft.thePlayer.getPositionEyes(event.partialTicks);
+        int playerX = net.minecraft.util.MathHelper.floor_double(playerEyes.xCoord);
+        int playerY = net.minecraft.util.MathHelper.floor_double(playerEyes.yCoord);
+        int playerZ = net.minecraft.util.MathHelper.floor_double(playerEyes.zCoord);
+
+        int searchRadius = LABEL_RANGE_BLOCKS;
+        for (int x = playerX - searchRadius; x <= playerX + searchRadius; x++) {
+            for (int y = playerY - searchRadius; y <= playerY + searchRadius; y++) {
+                for (int z = playerZ - searchRadius; z <= playerZ + searchRadius; z++) {
+                    BlockPos blockPos = new BlockPos(x, y, z);
+                    Block block = minecraft.theWorld.getBlockState(blockPos).getBlock();
+                    if (!isDepositChest(block)) {
+                        continue;
+                    }
+
+                    Vec3 chestCenter = new Vec3(blockPos.getX() + 0.5D, blockPos.getY() + 1.1D, blockPos.getZ() + 0.5D);
+                    if (playerEyes.distanceTo(chestCenter) > searchRadius) {
+                        continue;
+                    }
+
+                    renderFloatingLabel(minecraft, chestCenter.xCoord, chestCenter.yCoord, chestCenter.zCoord, event.partialTicks);
+                }
+            }
+        }
+    }
+
+    private void renderFloatingLabel(Minecraft minecraft, double x, double y, double z, float partialTicks) {
+        double camX = minecraft.getRenderManager().viewerPosX;
+        double camY = minecraft.getRenderManager().viewerPosY;
+        double camZ = minecraft.getRenderManager().viewerPosZ;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) (x - camX), (float) (y - camY), (float) (z - camZ));
+        GlStateManager.rotate(-minecraft.getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
+        GlStateManager.rotate(minecraft.getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
+        GlStateManager.scale(-0.025F, -0.025F, 0.025F);
+        GlStateManager.disableLighting();
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        RenderHelper.disableStandardItemLighting();
+
+        String textTop = "PUNCH TO";
+        String textBottom = "DEPOSIT";
+        int topWidth = minecraft.fontRendererObj.getStringWidth(textTop);
+        int bottomWidth = minecraft.fontRendererObj.getStringWidth(textBottom);
+        int baseY = -4;
+
+        minecraft.fontRendererObj.drawStringWithShadow(textTop, -topWidth / 2, baseY, 0xFFFFFF);
+        minecraft.fontRendererObj.drawStringWithShadow(textBottom, -bottomWidth / 2, baseY + 9, 0xFFFFFF);
+
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+    }
+
     private int findHotbarSlot(Container container, InventoryPlayer inventoryPlayer, int hotbarIndex) {
         for (Object slotObject : container.inventorySlots) {
             Slot slot = (Slot) slotObject;
@@ -147,6 +234,15 @@ public class ClientEventHandler {
 
         Item item = stack.getItem();
         if (item instanceof ItemTool) {
+            return false;
+        }
+        if (item instanceof ItemSword) {
+            return false;
+        }
+        if (item instanceof ItemBow) {
+            return false;
+        }
+        if (item instanceof ItemShears) {
             return false;
         }
 
