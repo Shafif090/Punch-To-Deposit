@@ -29,6 +29,14 @@ Open the settings screen with `P` to toggle:
 - the whole mod on or off
 - the chest hover label on or off
 
+## Screenshots and Videos
+
+<img src="media/Demo_1.gif" alt=""/>
+
+<img src="media/Demo_2.gif" alt=""/>
+
+<img src="media/Demo_3.png" alt=""/>
+
 ## Installation
 
 1. Install [Forge 1.8.9](https://files.minecraftforge.net) for Minecraft 1.8.9.
